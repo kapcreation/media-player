@@ -1,7 +1,7 @@
 let player = null
 const audioPlayer = document.getElementById("audio-player")
 const videoPlayer = document.getElementById("video-player")
-let usedPlayers = []
+const players = [audioPlayer, videoPlayer]
 
 const fileInput = document.getElementById("file-input")
 
@@ -43,35 +43,43 @@ function playMedia() {
       break
   }
 
-  if (!usedPlayers.includes(player)) {
-    player.addEventListener('loadedmetadata', function() {
-      player.volume = volume
-      updateVolumeDisplay()
-    });
-    player.addEventListener("timeupdate", updateProgressBar)
-
-    usedPlayers.push(player)
-  }
-
-
   player.style.display = "block"
   player.src = url
   player.play()
 
   controls.style.display = "block"
-  document.title = file.name + "- Media Player"
+  document.title = file.name + " - Media Player"
 }
 
 function pauseMedia() {
-  player.paused ? player.play() : player.pause()   
+  const ended = player.currentTime >= player.duration - 0.1
 
-  pauseBtn.innerHTML = player.paused ? `
-  <i class="bi bi-play-fill"></i>
-  <div class="tooltip-text">Play (k)</div>
-  ` : `
-  <i class="bi bi-pause-fill"></i>
-  <div class="tooltip-text">Pause (k)</div>
-  `
+  if (!ended) {
+    player.paused ? player.play() : player.pause()   
+  } else {
+    player.currentTime = 0
+    player.play()
+  }
+
+  updatePauseBtn()
+}
+
+function updatePauseBtn() {
+  const ended = player.currentTime >= player.duration - 0.1
+  if (!ended) {
+    pauseBtn.innerHTML = player.paused ? `
+      <i class="bi bi-play-fill"></i>
+      <div class="tooltip-text">Play (k)</div>
+    ` : `
+      <i class="bi bi-pause-fill"></i>
+      <div class="tooltip-text">Pause (k)</div>
+    `
+  } else {
+    pauseBtn.innerHTML = `
+      <i class="bi bi-arrow-counterclockwise"></i>
+      <div class="tooltip-text">Replay (k)</div>
+    `
+  }
 }
 
 function increaseVolume(value) {
@@ -102,10 +110,21 @@ document.addEventListener("keydown", function(event) {
 
   if (event.key === 'k') pauseMedia()
 
-  if (event.key === 'j' || event.key === 'LeftArrow') player.currentTime -= 5
-  if (event.key === 'l' || event.key === 'RightArrow') player.currentTime += 5
+  if (event.key === 'j' || event.key === 'ArrowLeft') player.currentTime -= 5
+  if (event.key === 'l' || event.key === 'ArrowRight') player.currentTime += 5
 
   if (event.key === 'ArrowDown') increaseVolume(-0.05)
   if (event.key === 'ArrowUp') increaseVolume(0.05)
   
+})
+
+
+
+players.forEach(player => {
+  player.addEventListener('loadedmetadata', function() {
+    player.volume = volume
+    updateVolumeDisplay()
+  });
+  player.addEventListener("timeupdate", updateProgressBar)
+  player.addEventListener("ended", updatePauseBtn)
 })
