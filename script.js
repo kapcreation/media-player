@@ -52,6 +52,8 @@ function playMedia() {
 }
 
 function pauseMedia() {
+  if (!player) return
+
   const ended = player.currentTime >= player.duration - 0.1
 
   if (!ended) {
@@ -107,15 +109,15 @@ function seek(value) {
 
 
 document.addEventListener("keydown", function(event) {
+  if (player) {
+    if (event.key === 'k') pauseMedia()
 
-  if (event.key === 'k') pauseMedia()
-
-  if (event.key === 'j' || event.key === 'ArrowLeft') player.currentTime -= 5
-  if (event.key === 'l' || event.key === 'ArrowRight') player.currentTime += 5
-
-  if (event.key === 'ArrowDown') increaseVolume(-0.05)
-  if (event.key === 'ArrowUp') increaseVolume(0.05)
+    if (event.key === 'j' || event.key === 'ArrowLeft') player.currentTime -= 5
+    if (event.key === 'l' || event.key === 'ArrowRight') player.currentTime += 5
   
+    if (event.key === 'ArrowDown') increaseVolume(-0.05)
+    if (event.key === 'ArrowUp') increaseVolume(0.05)
+  }
 })
 
 
