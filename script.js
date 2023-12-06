@@ -56,12 +56,18 @@ function pauseMedia() {
 
   const ended = player.currentTime >= player.duration - 0.1
 
-  if (!ended) {
-    player.paused ? player.play() : player.pause()   
-  } else {
-    player.currentTime = 0
-    player.play()
+  if (!ended) player.paused ? player.play() : player.pause() 
+  else {
+    replayMedia()
+    return
   }
+
+  updatePauseBtn()
+}
+
+function replayMedia() {
+  player.currentTime = 0
+  player.play()
 
   updatePauseBtn()
 }
