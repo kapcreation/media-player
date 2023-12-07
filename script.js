@@ -1,3 +1,5 @@
+const storagePrefix = "media-player_"
+
 let player = null
 const audioPlayer = document.getElementById("audio-player")
 const videoPlayer = document.getElementById("video-player")
@@ -11,7 +13,7 @@ const pauseBtn = document.querySelector(".controls .pause")
 
 const volumeDisplay = document.querySelector(".controls .volume .value")
 
-let volume = parseFloat(localStorage.getItem("volume")) || 0.5
+let volume = parseFloat(localStorage.getItem(storagePrefix + "volume")) || 0.5
 
 let fileType = null
 
@@ -94,7 +96,7 @@ function increaseVolume(value) {
   if ((value > 0 && volume + value > 1) || (value < 0 && volume + value < 0)) return
   volume += value
   player.volume = volume
-  localStorage.setItem("volume", volume.toString())
+  localStorage.setItem(storagePrefix + "volume", volume.toString())
   updateVolumeDisplay()
 }
 
